@@ -30,18 +30,34 @@ import './Board.css';
  **/
 
 class Board extends Component {
-
+  static defaultProps = {
+    nrows: 5,
+    ncols: 5,
+    chanceLightStartsOn: .25
+  }
   constructor(props) {
     super(props);
 
-    // TODO: set initial state
+    this.state = {
+      hasWon: false,
+      board: this.createBoard()
+    }
+
+    this.flipCellsAround = this.flipCellsAround.bind(this);
   }
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
 
   createBoard() {
     let board = [];
-    // TODO: create array-of-arrays of true/false values
+    // create array-of-arrays of true/false values
+    for (let i = 0; i < this.props.nrows; i++) {
+      let row = [];
+      for (let j = 0; j < this.props.ncols; j++) {
+        row.push(Math.random() < this.props.chanceLightStartsOn)
+      }
+      board.push(row)
+    }
     return board
   }
 
@@ -62,9 +78,15 @@ class Board extends Component {
     }
 
     // TODO: flip this cell and the cells around it
+    flipCell(y    , x)
+    flipCell(y + 1, x)
+    flipCell(y    , x + 1)
+    flipCell(y - 1, x)
+    flipCell(y    , x - 1)
 
     // win when every cell is turned off
     // TODO: determine is the game has been won
+    let hasWon = board.every(row => row.every(cell => !cell))
 
     this.setState({board, hasWon});
   }
@@ -76,11 +98,27 @@ class Board extends Component {
 
     // if the game is won, just show a winning msg & render nothing else
 
-    // TODO
+    if (this.state.hasWon) {
+      return <h1>GZ</h1>
+    }
 
     // make table board
+    let tblBoard = []
+    for (let i = 0; i < this.props.nrows; i++) {
+      let row = [];
+      for (let j = 0; j < this.props.ncols; j++) {
 
-    // TODO
+        let coord = `${i}-${j}`
+        row.push(<Cell key={coord} isLit={this.state.board[i][j]} flipCellsAroundMe={() => this.flipCellsAround(coord)} />)
+      }
+      tblBoard.push(<tr key={i}>{row}</tr>)
+    }
+
+    return <table className="Board">
+      <tbody>
+        {tblBoard}
+      </tbody>
+    </table>
   }
 }
 
