@@ -1,0 +1,4 @@
+.Todo .isCompleted {
+    text-decoration: line-through;
+    color: gray;
+}
